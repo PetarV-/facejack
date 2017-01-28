@@ -6,9 +6,8 @@ import base64
 import png
 import io
 import requests
+from adv-cnn.model import is_admin, is_pvelcc, do_adver
 app = Flask(__name__)
-
-
 
 def publish_image(face_im, adv_im, combined_im):
     """convert png; base64 encode that and post to stat server"""
@@ -45,13 +44,15 @@ def proc_face(face):
     :return: bool: true for admin and false otherwise
     """
     print("PROC_FACE")
+    get_trained(wt_file=None)
     time.sleep(3)
     publish_image(face, face, face)
-    return False
+    return is_admin(face)
 
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
-    proc_face(face)
+    face1 = do_adver(face)
+    return proc_face(face1)
 
 @app.route('/')
 def hello_world():

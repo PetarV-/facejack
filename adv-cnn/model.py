@@ -14,6 +14,7 @@ from keras.models import Model
 from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout
 
 import numpy as np
+import adver
 
 def get_model():
     inp = Input(shape=(224, 224, 3), name='face')
@@ -153,8 +154,21 @@ def get_model():
 
     return model
 
-def get_model(wt_file):
+def get_trained(wt_file=None):
     model = get_model()
-    model.load_weights(wt_file)
+    if wt_file is not None:
+        model.load_weights(wt_file)
     return model
+
+mdl1 = get_trained(wt_file=None)
+mdl2 = get_trained(wt_file=None)
+
+def is_admin(x):
+    return mdl1.predict(x) > 0.5
+
+def is_pvelcc(x):
+    return mdl2.predict(x) > 0.5
+
+def do_adver(x):
+    return adver.adv_img(mdl1, x, 0.99)
 
