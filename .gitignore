@@ -91,3 +91,7 @@ ENV/
 
 # IntelliJ
 .idea
+
+lfw
+faces
+faces1.tar.gz

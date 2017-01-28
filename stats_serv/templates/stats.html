@@ -63,7 +63,7 @@
             <span class="regular-notice">No hacking</span>
             {% endif %}
         </div>
-        <div class="img-container">
+        <div id="img-container">
             <div class="col-sm-4">
                 <p class="img-subtitle">Original</p>
                 <img class="face-img" src="{{ original_img }}">
@@ -78,6 +78,11 @@
                 <p class="img-subtitle">Result</p>
                 <img class="face-img" src="{{ modified_img }}">
             </div>
+        </div>
+        <div id="stats-container">
+            {% if confidence is not none %}
+            <span>Confidence: {{ confidence }}%</span>
+            {% endif %}
         </div>
     </div>
 </div><!-- /.container -->

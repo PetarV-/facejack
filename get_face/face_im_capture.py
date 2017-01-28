@@ -13,7 +13,7 @@ def main():
     # Read the image
     vidcap = cv2.VideoCapture(0)
 
-    location_persistence_tolerance = 40
+    location_persistence_tolerance = 70
     last_seen = None
     im_count=0
     while vidcap.isOpened():
@@ -66,7 +66,7 @@ def main():
                     # else:
                     #     cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
                     cv2.imshow("Face",  sub_face)
-                    cv2.imwrite('faces/face_laurynas_{}.jpg'.format(im_count), sub_face)
+                    cv2.imwrite('faces/face_petar_{}.jpg'.format(im_count), sub_face)
                     im_count+=1
             else:
 
