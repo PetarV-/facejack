@@ -6,6 +6,7 @@ import png
 import io
 import requests
 from adv_cnn.model import is_admin, is_pvelcc, do_adver
+
 app = Flask(__name__)
 
 def publish_image(face_im, adv_im, combined_im):

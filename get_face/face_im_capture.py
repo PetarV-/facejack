@@ -66,12 +66,12 @@ def main():
                     # else:
                     #     cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
                     cv2.imshow("Face",  sub_face)
-                    cv2.imwrite('faces/face_laurynas_{}.jpeg'.format(im_count), sub_face)
+                    cv2.imwrite('faces/face_laurynas_{}.jpg'.format(im_count), sub_face)
                     im_count+=1
             else:
 
                 last_seen = x, y, w, h, 0
-            
+
             cv2.rectangle(image, (x, y), (x + w, y + h), green, 2)
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x + w, y + h), red, 2)
