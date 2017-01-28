@@ -11,7 +11,7 @@
 """
 
 from keras.models import Model
-from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout
+from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout, Activation
 
 import numpy as np
 from adv_cnn import adver
@@ -160,7 +160,7 @@ def get_trained(wt_file=None):
         model.load_weights(wt_file)
     return model
 
-mdl1 = get_trained(wt_file=None)
+mdl1 = get_trained(wt_file='adv_cnn/vgg_weights.h5')
 mdl2 = get_trained(wt_file=None)
 
 def is_admin(x):

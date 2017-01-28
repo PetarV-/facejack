@@ -67,7 +67,7 @@ def adv_img(mdl, img, thresh):
     evaluator = Eval(mdl)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
     while confidence < thresh:
-        res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1})
+        res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
         img = res.x
         min_val = res.fun
         confidence = -min_val
