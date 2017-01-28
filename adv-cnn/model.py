@@ -151,6 +151,10 @@ def get_model():
     model.save_weights('vgg_weights.h5')
     """
 
-    model.load_weights('vgg_weights.h5')
-
     return model
+
+def get_model(wt_file):
+    model = get_model()
+    model.load_weights(wt_file)
+    return model
+
