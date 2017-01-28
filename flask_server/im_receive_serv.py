@@ -6,7 +6,7 @@ import png
 import io
 import requests
 import numpy as np
-from adv_cnn.model import is_admin, is_pvelcc, do_adver
+from adv_cnn.model import is_admin, do_adver
 
 app = Flask(__name__)
 
@@ -52,7 +52,7 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     png.from_array(combined_im, 'RGB').save(text_buf)
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
-    url = "http://52.233.152.34:5000/push_stats"
+    url = "http://facejack.westeurope.cloudapp.azure.com:5000/push_stats"
 
     payload = b"adversarial=yes&original_img="+encoded_face+\
               b"&adv_mod_img="+encoded_adv+\
