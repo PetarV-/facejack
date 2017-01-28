@@ -15,7 +15,7 @@ from keras import backend as K
 from scipy.optimize import minimize
 import numpy as np
 
-inp_size = (10, 10, 1)
+inp_size = (224, 224, 1)
 
 class Eval(object):
     def __init__(self, mdl):
