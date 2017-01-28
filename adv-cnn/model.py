@@ -19,4 +19,7 @@ def get_model():
     out = Dense(1, activation='sigmoid', name='conf')(flat)
 
     model = Model(input=inp, output=out)
+    
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
     return model
