@@ -79,6 +79,11 @@
                 <img class="face-img" src="{{ modified_img }}">
             </div>
         </div>
+        <div class="stats-container">
+            {% if confidence is not none %}
+            <span>Confidence: {{ confidence }}%</span>
+            {% endif %}
+        </div>
     </div>
 </div><!-- /.container -->
 

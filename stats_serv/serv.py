@@ -8,6 +8,7 @@ app.cache['adversarial_enabled'] = False
 app.cache['original_img'] = temp_img_encoded
 app.cache['adv_mod_img'] = temp_img_encoded
 app.cache['modified_img'] = temp_img_encoded
+app.cache['confidence'] = None
 
 @app.route('/push_stats', methods=['POST'])
 def push_stats():
@@ -15,6 +16,10 @@ def push_stats():
     app.cache['original_img'] = request.form['original_img'].replace('#','+')
     app.cache['adv_mod_img'] = request.form['adv_mod_img'].replace('#','+')
     app.cache['modified_img'] = request.form['modified_img'].replace('#','+')
+    if app.cache['adversarial_enabled']:
+        app.cache['confidence'] = request.form['confidence']
+    else:
+        app.cache['confidence'] = None
     return ('', 204)
 
 @app.route('/')
@@ -23,4 +28,5 @@ def stats_main():
                            adv=app.cache['adversarial_enabled'],
                            original_img=app.cache['original_img'],
                            adv_mod_img=app.cache['adv_mod_img'],
-                           modified_img=app.cache['modified_img'])
+                           modified_img=app.cache['modified_img'],
+                           confidence=app.cache['confidence'])

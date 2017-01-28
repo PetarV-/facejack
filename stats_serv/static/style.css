@@ -26,7 +26,11 @@ body {
     height: 224px;
 }
 
-.img-container {
+#img-container {
+    margin-top: 65px;
+}
+
+#stats-container {
     margin-top: 65px;
 }
 
