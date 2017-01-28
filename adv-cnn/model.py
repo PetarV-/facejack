@@ -10,5 +10,13 @@
 
 """
 
+from keras.models import Model
+from keras.layers import Input, Dense, Flatten
+
 def get_model():
-    pass
+    inp = Input(shape=(10,10,1))
+    flat = Flatten()(inp)
+    out = Dense(1, activation='sigmoid', name='conf')(flat)
+
+    model = Model(input=inp, output=out)
+    return model
