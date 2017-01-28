@@ -14,7 +14,7 @@ from keras.models import Model
 from keras.layers import Input, Dense, Flatten
 
 def get_model():
-    inp = Input(shape=(10,10,1))
+    inp = Input(shape=(10,10,1), name='face')
     flat = Flatten()(inp)
     out = Dense(1, activation='sigmoid', name='conf')(flat)
 
