@@ -87,4 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.idea/
+
+
+# IntelliJ
+.idea
