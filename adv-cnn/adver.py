@@ -12,7 +12,7 @@
 
 from keras.models import Model
 from keras import backend as K
-from scipy.optimize import fmin_l_bgfs_b
+from scipy.optimize import minimize
 import numpy as np
 
 inp_size = (10, 10, 1)
@@ -67,7 +67,9 @@ def adv_img(mdl, img, thresh):
     evaluator = Eval(mdl)
     confidence = 0.0
     while confidence < thresh:
-        img, min_val, info = fmin_l_bgfs_b(evaluator.loss, img.flatten(), fprime=evaluator.grads, maxfun=1)
+        res = minimize(evaluator.loss, img.flatten(), method='L-BGFS-B', jac=evaluator.grads, options={maxiter: 1})
+        img = res.x
+        min_val = res.fun
         confidence = -min_val
         print('Current confidence value: ', confidence)
         img = img.reshape(inp_size)
