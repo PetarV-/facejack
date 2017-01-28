@@ -13,6 +13,9 @@ app.cache['modified_img'] = temp_img_encoded
 @app.route('/push_stats', methods=['POST'])
 def push_stats():
     app.cache['adversarial_enabled'] = request.form['adversarial'] == 'yes'
+    app.cache['original_img'] = request.form['original_img']
+    app.cache['adv_mod_img'] = request.form['adv_mod_img']
+    app.cache['modified_img'] = request.form['modified_img']
     return ('', 204)
 
 @app.route('/')
