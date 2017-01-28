@@ -1,12 +1,11 @@
 from flask import Flask
 from flask import request, jsonify
 import pickle
-import time
 import base64
 import png
 import io
 import requests
-from adv-cnn.model import is_admin, is_pvelcc, do_adver
+from adv_cnn.model import is_admin, is_pvelcc, do_adver
 app = Flask(__name__)
 
 def publish_image(face_im, adv_im, combined_im):
@@ -44,9 +43,8 @@ def proc_face(face):
     :return: bool: true for admin and false otherwise
     """
     print("PROC_FACE")
-    get_trained(wt_file=None)
-    time.sleep(3)
-    publish_image(face, face, face)
+    # time.sleep(3)
+    # publish_image(face, face, face)
     return is_admin(face)
 
 def proc_face_with_hack(face):
