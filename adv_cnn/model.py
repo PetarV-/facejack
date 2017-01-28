@@ -161,14 +161,10 @@ def get_trained(wt_file=None):
     return model
 
 mdl1 = get_trained(wt_file='adv_cnn/vgg_weights.h5')
-mdl2 = get_trained(wt_file=None)
 
 def is_admin(x):
     return mdl1.predict(x.reshape(1,224,224,3)) > 0.5
 
-def is_pvelcc(x):
-    return mdl2.predict(x.reshape(1,224,224,3)) > 0.5
-
 def do_adver(x):
-    return adver.adv_img(mdl1, x, 0.9)
+    yield from adver.adv_img(mdl1, x, 0.9)
 
