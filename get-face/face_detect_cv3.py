@@ -6,7 +6,7 @@ import requests
 
 
 def main():
-    cascPath = "haarcascade_frontalface_default.xml"
+    cascPath = "get-face/haarcascade_frontalface_default.xml"
     # Create the haar cascade
     myurl = "http://127.0.0.1:5000/imsend"
     headers = {
