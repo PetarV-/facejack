@@ -48,6 +48,10 @@ def proc_face(face):
     publish_image(face, face, face)
     return False
 
+def proc_face_with_hack(face):
+    print("MAJOR HACK IN PROGRESS")
+    proc_face(face)
+
 @app.route('/')
 def hello_world():
     return 'Image authentication server, post the image to /imsend'
@@ -55,10 +59,16 @@ def hello_world():
 @app.route('/imsend', methods=['GET', 'POST'])
 def imreceive():
     data = None
+    hack = False
     if request.method == "POST":
         data = request.get_data()
+        if 'hack' in request.args:
+            hack = request.args['hack']=="True"
         face = pickle.loads(data)
         print("Image Received")
-        if face.shape==(224,224) and face.dtype=="uint8" and proc_face(face):
-            return jsonify(dict(authentication="ALLOWED"))
+        if face.shape==(224,224) and face.dtype=="uint8":
+            if hack and proc_face_with_hack(face):
+                return jsonify(dict(authentication="ALLOWED"))
+            elif not hack and proc_face(face):
+                return jsonify(dict(authentication="ALLOWED"))
     return jsonify(dict(authentication="DENIED"))
