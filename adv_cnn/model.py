@@ -19,34 +19,34 @@ from adv_cnn import adver
 def get_model():
     inp = Input(shape=(224, 224, 3), name='face')
 
-    conv11 = Convolution2D(64, 3, 3, border_mode='same', activation='relu', name='conv11')(inp)
-    conv12 = Convolution2D(64, 3, 3, border_mode='same', activation='relu', name='conv12')(conv11)
+    conv11 = Convolution2D(64, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv11')(inp)
+    conv12 = Convolution2D(64, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv12')(conv11)
     pool12 = MaxPooling2D((2, 2))(conv12)
 
-    conv21 = Convolution2D(128, 3, 3, border_mode='same', activation='relu', name='conv21')(pool12)
-    conv22 = Convolution2D(128, 3, 3, border_mode='same', activation='relu', name='conv22')(conv21)
+    conv21 = Convolution2D(128, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv21')(pool12)
+    conv22 = Convolution2D(128, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv22')(conv21)
     pool22 = MaxPooling2D((2, 2))(conv22)
 
-    conv31 = Convolution2D(256, 3, 3, border_mode='same', activation='relu', name='conv31')(pool22)
-    conv32 = Convolution2D(256, 3, 3, border_mode='same', activation='relu', name='conv32')(conv31)
-    conv33 = Convolution2D(256, 3, 3, border_mode='same', activation='relu', name='conv33')(conv32)
+    conv31 = Convolution2D(256, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv31')(pool22)
+    conv32 = Convolution2D(256, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv32')(conv31)
+    conv33 = Convolution2D(256, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv33')(conv32)
     pool33 = MaxPooling2D((2, 2))(conv33)
 
-    conv41 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv41')(pool33)
-    conv42 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv42')(conv41)
-    conv43 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv43')(conv42)
+    conv41 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv41')(pool33)
+    conv42 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv42')(conv41)
+    conv43 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv43')(conv42)
     pool43 = MaxPooling2D((2, 2))(conv43)
 
-    conv51 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv51')(pool43)
-    conv52 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv52')(conv51)
-    conv53 = Convolution2D(512, 3, 3, border_mode='same', activation='relu', name='conv53')(conv52)
+    conv51 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv51')(pool43)
+    conv52 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv52')(conv51)
+    conv53 = Convolution2D(512, 3, 3, border_mode='same', trainable=False, activation='relu', name='conv53')(conv52)
     pool53 = MaxPooling2D((2, 2))(conv53)
 
     flat = Flatten()(pool53)
 
-    fc6 = Dense(4096, activation='relu', name='fc6')(flat)
+    fc6 = Dense(4096, trainable=False, activation='relu', name='fc6')(flat)
     fc6 = Dropout(0.5)(fc6)
-    fc7 = Dense(4096, activation='relu', name='fc7')(fc6)
+    fc7 = Dense(4096, trainable=False, activation='relu', name='fc7')(fc6)
     fc7 = Dropout(0.5)(fc7)
     out = Dense(1, activation='sigmoid', name='conf')(fc7)
 
@@ -170,5 +170,5 @@ def is_pvelcc(x):
     return mdl2.predict(x.reshape(1,224,224,3)) > 0.5
 
 def do_adver(x):
-    return adver.adv_img(mdl1, x, 0.99)
+    return adver.adv_img(mdl1, x, 0.9)
 
