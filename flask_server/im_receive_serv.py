@@ -6,7 +6,7 @@ import base64
 import png
 import io
 import requests
-app = Flask(__name__, port=5001)
+app = Flask(__name__)
 
 
 
@@ -15,23 +15,23 @@ def publish_image(face_im, adv_im, combined_im):
     # Do face
     text_buf = io.BytesIO()
     png.from_array(face_im, 'L').save(text_buf)
-    encoded_face = "data:image/png;base64,"+base64.b64encode(text_buf.getvalue())
+    encoded_face = b"data:image/png;base64,"+base64.b64encode(text_buf.getvalue(),b'#/')
 
     # Do adv
     text_buf = io.BytesIO()
     png.from_array(adv_im, 'L').save(text_buf)
-    encoded_adv = "data:image/png;base64," + base64.b64encode(text_buf.getvalue())
+    encoded_adv = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     # Do combined
     text_buf = io.BytesIO()
     png.from_array(combined_im, 'L').save(text_buf)
-    encoded_combined = "data:image/png;base64," + base64.b64encode(text_buf.getvalue())
+    encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     url = "http://127.0.0.1:5000/push_stats"
 
-    payload = "adverserial=yes&original_img="+encoded_face+\
-              "&adv_mod_img="+encoded_adv+\
-              "&modified_img="+encoded_combined
+    payload = b"adversarial=yes&original_img="+encoded_face+\
+              b"&adv_mod_img="+encoded_adv+\
+              b"&modified_img="+encoded_combined
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"

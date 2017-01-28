@@ -7,8 +7,9 @@ import requests
 
 def main():
     cascPath = "get-face/haarcascade_frontalface_default.xml"
+    cascPath = "haarcascade_frontalface_default.xml"
     # Create the haar cascade
-    myurl = "http://127.0.0.1:5000/imsend"
+    myurl = "http://127.0.0.1:5001/imsend"
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
@@ -62,8 +63,9 @@ def main():
                     cv2.imshow("Face", sub_face)
                     last_seen = x, y, w, h, 0
                     dat = pickle.dumps(sub_face)
-                    r = requests.post(url = myurl, data=dat, headers=headers)
-                    reply = r.json()['authentication'] == "ALLOWED"
+                    r = requests.post(url = myurl, data=dat, headers=headers).json()
+
+                    reply = 'authentication' in r and r['authentication'] == "ALLOWED"
                     disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
                     if reply:
                         cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
