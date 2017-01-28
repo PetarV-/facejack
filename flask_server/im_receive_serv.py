@@ -5,11 +5,37 @@ import base64
 import png
 import io
 import requests
+import numpy as np
 from adv_cnn.model import is_admin, is_pvelcc, do_adver
 
 app = Flask(__name__)
 
-def publish_image(face_im, adv_im, combined_im):
+def get_adv(face, mod_face):
+    red1 = face[:,:,0]
+    green1 = face[:,:,1]
+    blue1 = face[:,:,2]
+    red2 = mod_face[:,:,0]
+    green2 = mod_face[:,:,1]
+    blue2 = mod_face[:,:,2]
+    diff_red = red1-red2
+    diff_green = green1-green2
+    diff_blue =blue1-blue2
+    min_red = diff_red.min()
+    max_red = diff_red.max()
+    min_green = diff_green.min()
+    max_green = diff_green.max()
+    min_blue = diff_blue.min()
+    max_blue = diff_blue.max()
+    diff_red = (diff_red-min_red)*(255/max_red)
+    diff_green = (diff_green-min_green)*(255/max_green)
+    diff_blue = (diff_blue-min_blue)*(255/max_blue)
+    diff = np.zeros_like(face)
+    diff[:,:,0] = diff_red
+    diff[:,:,1] = diff_green
+    diff[:,:,2] = diff_blue
+    return diff
+
+def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     """convert png; base64 encode that and post to stat server"""
     # Do face
     text_buf = io.BytesIO()
@@ -30,13 +56,14 @@ def publish_image(face_im, adv_im, combined_im):
 
     payload = b"adversarial=yes&original_img="+encoded_face+\
               b"&adv_mod_img="+encoded_adv+\
-              b"&modified_img="+encoded_combined
+              b"&modified_img="+encoded_combined+\
+              b"&confidence="+str(confidence).encode()
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
     }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
+    response = requests.request("POST", url, data=payload, headers=headers, )
 
 def proc_face(face):
     """
@@ -50,7 +77,8 @@ def proc_face(face):
 
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
-    face1 = do_adver(face)
+    for face1, confidence in do_adver(face):
+        publish_image(face, get_adv(face, face1), face1, confidence)
     return proc_face(face1)
 
 @app.route('/')
