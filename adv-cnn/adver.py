@@ -53,7 +53,7 @@ class Eval(object):
 
     def loss(self, x):
         assert self.loss_value is None
-        eval_loss_and_grads(x)
+        self.eval_loss_and_grads(x)
         return self.loss_value
 
     def grads(self, x):
@@ -67,7 +67,7 @@ def adv_img(mdl, img, thresh):
     evaluator = Eval(mdl)
     confidence = 0.0
     while confidence < thresh:
-        res = minimize(evaluator.loss, img.flatten(), method='L-BGFS-B', jac=evaluator.grads, options={maxiter: 1})
+        res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1})
         img = res.x
         min_val = res.fun
         confidence = -min_val
