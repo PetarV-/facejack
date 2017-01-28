@@ -1,13 +1,19 @@
 import cv2
 import operator
 import numpy as np
+import pickle
 import requests
 
 
 def main():
     cascPath = "haarcascade_frontalface_default.xml"
     # Create the haar cascade
-    myurl = "Idon't know yet"
+    myurl = "http://127.0.0.1:5000/imsend"
+    headers = {
+        'content-type': "application/x-www-form-urlencoded",
+        'cache-control': "no-cache"
+    }
+
     faceCascade = cv2.CascadeClassifier(cascPath)
     # Read the image
     vidcap = cv2.VideoCapture(0)
@@ -28,9 +34,9 @@ def main():
             # flags = cv2.CV_HAAR_SCALE_IMAGE
         )
 
-        print("Found {0} faces!".format(len(faces)))
+        # print("Found {0} faces!".format(len(faces)))
         red = (0, 0, 0)
-        green = (0, 255, 0)
+        green = (255, 0, 0)
 
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
@@ -51,21 +57,25 @@ def main():
                     count += 1
                     last_seen = x, y, w, h, count
 
-                if count > 30:
-                    sub_face = gray[y:y + h, x:x + w]
+                if count > 5:
+                    sub_face = cv2.resize(gray[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
                     cv2.imshow("Face", sub_face)
                     last_seen = x, y, w, h, 0
-                    dat = cv2.imencode('.bmp', sub_face)[1].tostring()
-                    print(dat)
-                    # undo ser.
-                    # nparr = np.fromstring(STRING_FROM_DATABASE, np.uint8)
-                    # img = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
-                    r = requests.post(url = myurl, data=dat)
+                    dat = pickle.dumps(sub_face)
+                    r = requests.post(url = myurl, data=dat, headers=headers)
+                    reply = r.json()['authentication'] == "ALLOWED"
+                    disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
+                    if reply:
+                        cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
+                    else:
+                        cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
+                    cv2.imshow("Face",  disp_face)
+
 
             else:
                 last_seen = x, y, w, h, 0
         cv2.imshow("FaceJACK", image)
-
+        print(last_seen)
         if (cv2.waitKey(1) & 0xFF) == ord('q'):
             break
 
