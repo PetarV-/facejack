@@ -6,14 +6,15 @@ import requests
 
 
 def main():
+    cascPath = "get-face/haarcascade_frontalface_default.xml"
     cascPath = "haarcascade_frontalface_default.xml"
     # Create the haar cascade
-    myurl = "http://127.0.0.1:5000/imsend"
+    myurl = "http://127.0.0.1:5001/imsend"
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
     }
-
+    hack = False
     faceCascade = cv2.CascadeClassifier(cascPath)
     # Read the image
     vidcap = cv2.VideoCapture(0)
@@ -22,6 +23,7 @@ def main():
     last_seen = None
 
     while vidcap.isOpened():
+        q=False
         retval, image = vidcap.read()
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -33,7 +35,6 @@ def main():
             minSize=(60, 60)
             # flags = cv2.CV_HAAR_SCALE_IMAGE
         )
-
         # print("Found {0} faces!".format(len(faces)))
         red = (0, 0, 0)
         green = (255, 0, 0)
@@ -57,13 +58,14 @@ def main():
                     count += 1
                     last_seen = x, y, w, h, count
 
-                if count > 5:
+                if count > 15:
                     sub_face = cv2.resize(gray[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
                     cv2.imshow("Face", sub_face)
                     last_seen = x, y, w, h, 0
                     dat = pickle.dumps(sub_face)
-                    r = requests.post(url = myurl, data=dat, headers=headers)
-                    reply = r.json()['authentication'] == "ALLOWED"
+                    r = requests.post(url = myurl, data=dat, headers=headers, params={'hack': str(hack)}).json()
+
+                    reply = 'authentication' in r and r['authentication'] == "ALLOWED"
                     disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
                     if reply:
                         cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
@@ -74,9 +76,19 @@ def main():
 
             else:
                 last_seen = x, y, w, h, 0
+
+        # print(last_seen)
+        key_press = (cv2.waitKey(1) & 0xFF)
+        if key_press == ord('q'):
+            q = True
+        elif key_press == ord('h'):
+            hack = not hack
+        if hack:
+            print("hack")
+            cv2.putText(image, 'HACK ON', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) )
+
         cv2.imshow("FaceJACK", image)
-        print(last_seen)
-        if (cv2.waitKey(1) & 0xFF) == ord('q'):
+        if q:
             break
 
     vidcap.release()
