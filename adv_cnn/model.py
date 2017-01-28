@@ -14,7 +14,7 @@ from keras.models import Model
 from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout
 
 import numpy as np
-import adver
+from adv_cnn import adver
 
 def get_model():
     inp = Input(shape=(224, 224, 3), name='face')
