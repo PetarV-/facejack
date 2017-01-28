@@ -14,17 +14,17 @@ def publish_image(face_im, adv_im, combined_im):
     """convert png; base64 encode that and post to stat server"""
     # Do face
     text_buf = io.BytesIO()
-    png.from_array(face_im, 'L').save(text_buf)
+    png.from_array(face_im, 'RGB').save(text_buf)
     encoded_face = b"data:image/png;base64,"+base64.b64encode(text_buf.getvalue(),b'#/')
 
     # Do adv
     text_buf = io.BytesIO()
-    png.from_array(adv_im, 'L').save(text_buf)
+    png.from_array(adv_im, 'RGB').save(text_buf)
     encoded_adv = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     # Do combined
     text_buf = io.BytesIO()
-    png.from_array(combined_im, 'L').save(text_buf)
+    png.from_array(combined_im, 'RGB').save(text_buf)
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     url = "http://127.0.0.1:5000/push_stats"
@@ -44,6 +44,7 @@ def proc_face(face):
     :param face: np.array with face in it
     :return: bool: true for admin and false otherwise
     """
+    print("PROC_FACE")
     time.sleep(3)
     publish_image(face, face, face)
     return False
@@ -66,7 +67,7 @@ def imreceive():
             hack = request.args['hack']=="True"
         face = pickle.loads(data)
         print("Image Received")
-        if face.shape==(224,224) and face.dtype=="uint8":
+        if face.shape==(224,224, 3) and face.dtype=="uint8":
             if hack and proc_face_with_hack(face):
                 return jsonify(dict(authentication="ALLOWED"))
             elif not hack and proc_face(face):

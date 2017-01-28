@@ -8,20 +8,14 @@ import requests
 def main():
     cascPath = "get-face/haarcascade_frontalface_default.xml"
     cascPath = "haarcascade_frontalface_default.xml"
-    # Create the haar cascade
-    myurl = "http://127.0.0.1:5001/imsend"
-    headers = {
-        'content-type': "application/x-www-form-urlencoded",
-        'cache-control': "no-cache"
-    }
-    hack = False
+
     faceCascade = cv2.CascadeClassifier(cascPath)
     # Read the image
     vidcap = cv2.VideoCapture(0)
 
     location_persistence_tolerance = 40
     last_seen = None
-
+    im_count=0
     while vidcap.isOpened():
         q=False
         retval, image = vidcap.read()
@@ -42,10 +36,12 @@ def main():
         # Draw a rectangle around the faces
 
 
+
+
         if len(faces) > 0:
             # get largest face
             (x, y, w, h) = max(faces, key=(lambda f: operator.itemgetter(2)(f)))
-
+            # paint it green
 
 
             # check persistance
@@ -55,41 +51,37 @@ def main():
                     count += 1
                     last_seen = x, y, w, h, count
 
-                if count > 25:
+                if count > 50:
                     sub_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
-                    s_face = cv2.cvtColor(sub_face, cv2.COLOR_BGR2RGB)
                     cv2.imshow("Face", sub_face)
-                    last_seen = x, y, w, h, 0
-                    dat = pickle.dumps(s_face)
-                    print(dat)
-                    r = requests.post(url = myurl, data=dat, headers=headers, params={'hack': str(hack)}).json()
-
-                    reply = 'authentication' in r and r['authentication'] == "ALLOWED"
+                    print(sub_face.shape)
+                    # last_seen = x, y, w, h, 0
+                    # dat = pickle.dumps(sub_face)
+                    # r = requests.post(url = myurl, data=dat, headers=headers, params={'hack': str(hack)}).json()
+                    #
+                    # reply = 'authentication' in r and r['authentication'] == "ALLOWED"
                     disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
-                    if reply:
-                        cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
-                    else:
-                        cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
-                    cv2.imshow("Face",  disp_face)
-                # paint it green
-                cv2.rectangle(image, (x, y), (x + w, y + h), green, 2)
+                    # if reply:
+                    #     cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
+                    # else:
+                    #     cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
+                    cv2.imshow("Face",  sub_face)
+                    cv2.imwrite('faces/face_laurynas_{}.jpeg'.format(im_count), sub_face)
+                    im_count+=1
             else:
-                last_seen = x, y, w, h, 0
 
+                last_seen = x, y, w, h, 0
+            
+            cv2.rectangle(image, (x, y), (x + w, y + h), green, 2)
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x + w, y + h), red, 2)
 
+        cv2.imshow("FaceJack", image)
         # print(last_seen)
         key_press = (cv2.waitKey(1) & 0xFF)
         if key_press == ord('q'):
             q = True
-        elif key_press == ord('h'):
-            hack = not hack
-        if hack:
-            print("hack")
-            cv2.putText(image, 'HACK ON', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) )
 
-        cv2.imshow("FaceJACK", image)
         if q:
             break
 
