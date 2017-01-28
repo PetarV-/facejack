@@ -51,13 +51,34 @@
     </div>
 </nav>
 
+<!-- http://placehold.it/224x224?text=Loading -->
+
 <div class="container">
-
-    <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    <div class="main-container">
+        <div class="col-sm-12">
+            {% if adv %}
+            <span class="adversarial-notice">Adversarial hacking enabled</span>
+            {% else %}
+            <span class="regular-notice">No hacking</span>
+            {% endif %}
+        </div>
+        <div class="img-container">
+            <div class="col-sm-4">
+                <p class="img-subtitle">Original</p>
+                <img class="face-img" src="{{ original_img }}">
+                <span class="math-sign">+</span>
+            </div>
+            <div class="col-sm-4">
+                <p class="img-subtitle">Modifications</p>
+                <img class="face-img" src="{{ adv_mod_img }}">
+                <span class="math-sign">=</span>
+            </div>
+            <div class="col-sm-4">
+                <p class="img-subtitle">Result</p>
+                <img class="face-img" src="{{ modified_img }}">
+            </div>
+        </div>
     </div>
-
 </div><!-- /.container -->
 
 

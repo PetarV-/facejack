@@ -2,7 +2,39 @@ body {
     padding-top: 50px;
 }
 
-.starter-template {
+.main-container {
     padding: 40px 15px;
-    text-align: center
+    font-family: monospace;
+}
+
+.adversarial-notice {
+    background-color: black;
+    color: red;
+    font-size: 22pt;
+    padding: 15px;
+}
+
+.regular-notice {
+    background-color: transparent;
+    color: green;
+    font-size: 22pt;
+    padding: 15px;
+}
+
+.face-img {
+    width: 224px;
+    height: 224px;
+}
+
+.img-container {
+    margin-top: 65px;
+}
+
+.img-subtitle {
+    font-size: 14pt;
+}
+
+.math-sign {
+    font-size: 22pt;
+    padding-left: 15px;
 }
