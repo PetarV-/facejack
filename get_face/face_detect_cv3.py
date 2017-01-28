@@ -9,7 +9,7 @@ def main():
     cascPath = "get-face/haarcascade_frontalface_default.xml"
     cascPath = "haarcascade_frontalface_default.xml"
     # Create the haar cascade
-    myurl = "http://127.0.0.1:5001/imsend"
+    myurl = "http://52.233.152.34:5001/imsend"
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"

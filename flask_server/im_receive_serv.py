@@ -26,7 +26,7 @@ def publish_image(face_im, adv_im, combined_im):
     png.from_array(combined_im, 'RGB').save(text_buf)
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
-    url = "http://127.0.0.1:5000/push_stats"
+    url = "http://52.233.152.34:5000/push_stats"
 
     payload = b"adversarial=yes&original_img="+encoded_face+\
               b"&adv_mod_img="+encoded_adv+\
