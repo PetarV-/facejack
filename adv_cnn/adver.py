@@ -72,6 +72,8 @@ def adv_img(mdl, img, thresh):
         min_val = res.fun
         confidence = -min_val
         print('Current confidence value: ', confidence)
-        img = img.reshape(inp_size) 
-        yield (img, confidence)
+        img = img.reshape(inp_size)
+        img_r = img + 0.5
+        img_r *= 255.0
+        yield (img_r, confidence)
 
