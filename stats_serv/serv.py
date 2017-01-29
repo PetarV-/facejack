@@ -27,3 +27,7 @@ def stats_main():
                            adv_mod_img=app.cache['adv_mod_img'],
                            modified_img=app.cache['modified_img'],
                            confidence=app.cache['confidence'])
+
+@app.route('/about')
+def about_main():
+    return render_template("about.html")
