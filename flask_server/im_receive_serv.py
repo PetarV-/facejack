@@ -49,7 +49,7 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
 
     # Do combined
     text_buf = io.BytesIO()
-    png.from_array(combined_im.astype(int), 'RGB').save(text_buf)
+    png.from_array(combined_im, 'RGB').save(text_buf)
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     url = "http://facejack.westeurope.cloudapp.azure.com:5000/push_stats"
@@ -78,6 +78,8 @@ def proc_face(face):
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
     for face1, confidence in do_adver(face):
+        face1 = face1.astype(int)
+        print(face1.shape, face1.dtype, face1.min())
         publish_image(face, get_adv(face, face1), face1, confidence)
     return proc_face(face1)
 
