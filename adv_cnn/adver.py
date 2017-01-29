@@ -132,7 +132,7 @@ def deprocess_img(x):
 
 def adv_img(mdl, img, thresh, max_iter=50):
     evaluator = Eval(mdl, img)
-    confidence = mdl.predict(img.reshape((1,) + inp_size))
+    confidence = mdl.predict(img.reshape((1,) + inp_size))[0][0]
     yield (deprocess_img(img), confidence)
     yield from evaluator.iterate(img) 
 
