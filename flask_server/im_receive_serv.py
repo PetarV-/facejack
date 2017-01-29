@@ -83,14 +83,14 @@ def proc_face(face):
     # time.sleep(3)
     # publish_image(face, face, face)
     res, conf = is_admin(face)
-    publish_image(face, np.zeros_like(face), face, conf)
+    publish_image(face, np.ones_like(face)*255, face, conf)
     return res
 
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
     for face1, confidence in do_adver(face):
         face1 = sanitise_image(face1)
-        publish_image(face, get_adv(face, face1), face1, confidence)
+        publish_image(face, get_adv(face, face1), face1, confidence, hack=True)
     return proc_face(face1)
 
 @app.route('/')

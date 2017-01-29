@@ -66,7 +66,7 @@ def main():
                     # else:
                     #     cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
                     cv2.imshow("Face",  sub_face)
-                    cv2.imwrite('faces/face_laurynas2_{}.jpg'.format(im_count), sub_face)
+                    cv2.imwrite('faces/face_laurynas3_{}.jpg'.format(im_count), sub_face)
                     im_count+=1
             else:
 
