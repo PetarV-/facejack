@@ -30,7 +30,7 @@ class Eval(object):
 
         loss -= K.sum(out)
         # Might want to add some L2-loss in here, depending on output
-        loss += K.sum(K.square(inp - x))
+        loss += 0.001 * K.sum(K.square(inp - x))
         grads = K.gradients(loss, inp)
 
         outputs = [loss]
