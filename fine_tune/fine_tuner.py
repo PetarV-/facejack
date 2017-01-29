@@ -20,8 +20,16 @@ from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 
 def tune(mdl, X_train, Y_train, patience=5):
-    X_train /= 255.0
-    X_train -= 0.5
+    #X_train /= 255.0
+    #X_train -= 0.5
+
+    X_train[:,:,:,0] -= 129.1863
+    X_train[:,:,:,1] -= 104.7624
+    X_train[:,:,:,2] -= 93.5940
+
+    aux = np.copy(X_train)
+    X_train[:,:,:,0] = aux[:,:,:,2]
+    X_train[:,:,:,2] = aux[:,:,:,0]
 
     X_train, X_test, Y_train, Y_test = train_test_split(X_train, Y_train, stratify=Y_train) 
 
@@ -29,8 +37,8 @@ def tune(mdl, X_train, Y_train, patience=5):
 
     mdl.fit(X_train, Y_train,
             batch_size=128,
-	    class_weight=class_weight,
-            nb_epoch=5,
+	    class_weight='auto',
+            nb_epoch=40,
             verbose=1,
             validation_data=(X_test, Y_test),
             callbacks=[EarlyStopping(monitor='val_loss', patience=patience)],

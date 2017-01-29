@@ -11,7 +11,7 @@
 """
 
 from keras.models import Model
-from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout, Activation
+from keras.layers import Input, Dense, Flatten, Convolution2D, MaxPooling2D, Dropout, Activation, BatchNormalization
 
 import numpy as np
 from adv_cnn import adver
@@ -45,9 +45,10 @@ def get_model():
     flat = Flatten()(pool53)
 
     fc6 = Dense(4096, trainable=False, activation='relu', name='fc6')(flat)
-    fc6 = Dropout(0.5)(fc6)
+    #fc6 = Dropout(0.5)(fc6)
     fc7 = Dense(4096, trainable=False, activation='relu', name='fc7')(fc6)
-    fc7 = Dropout(0.5)(fc7)
+    #fc7 = Dropout(0.5)(fc7)
+    fc7 = BatchNormalization()(fc7)
     out = Dense(1, activation='sigmoid', name='conf')(fc7)
 
     model = Model(input=inp, output=out)
@@ -157,20 +158,20 @@ def get_model():
 def get_trained(wt_file=None):
     model = get_model()
     if wt_file is not None:
-        model.load_weights(wt_file)
+        model.load_weights(wt_file, by_name=True)
     return model
 
 mdl1 = get_trained(wt_file='adv_cnn/vgg_tuned.h5')
 
 def is_admin(x):
     x = x.astype('float32') 
-    x /= 255.0
-    x -= 0.5
+    #x /= 255.0
+    #x -= 0.5
     return mdl1.predict(x.reshape(1,224,224,3)) > 0.5
 
 def do_adver(x):
     x = x.astype('float32')
-    x /= 255.0
-    x -= 0.5
+    #x /= 255.0
+    #x -= 0.5
     yield from adver.adv_img(mdl1, x, 0.95)
 
