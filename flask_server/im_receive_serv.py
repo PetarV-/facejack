@@ -35,6 +35,9 @@ def get_adv(face, mod_face):
     diff[:,:,2] = diff_blue
     return diff
 
+def sanitise_image(mat):
+    return np.rint(mat).astype(int).astype(np.uint8)
+
 def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     """convert png; base64 encode that and post to stat server"""
     # Do face
@@ -78,8 +81,7 @@ def proc_face(face):
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
     for face1, confidence in do_adver(face):
-        face1 = face1.astype(np.int8)
-        print(face1.shape, face1.dtype, face1.min())
+        face1 = sanitise_image(face1)
         publish_image(face, get_adv(face, face1), face1, confidence)
     return proc_face(face1)
 
