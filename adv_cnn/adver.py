@@ -29,7 +29,6 @@ class Eval(object):
         out = layer_dict['conf'].output
 
         loss -= K.sum(out)
-        loss += 0.8 * K.sum(K.square(inp)) / np.prod(inp_size)
         # Might want to add some L2-loss in here, depending on output
         #loss += 0.0005 * K.sum(K.square(inp - x))
         grads = K.gradients(loss, inp)
@@ -51,6 +50,20 @@ class Eval(object):
         scaled_s_grads = eps * s_grads
         adv_x = x + scaled_s_grads
         return np.clip(adv_x, 0.0, 255.0)
+
+    def iterate(self, x, eps=32, alp=1.0):
+        num_iter = min(eps + 4, 1.25 * eps)
+        while num_iter > 0:
+            inp = x.reshape((1,) + inp_size)
+            outs = self.f_outputs([inp, 0])
+            loss = outs[0]
+            print('Loss: ', loss)
+            grads = np.array(outs[1:]).reshape(inp_size)
+            s_grads = np.sign(grads)
+            adv_x = x + alp * s_grads
+            sub_x = np.minimum(x + eps, np.maximum(x - eps, adv_x))
+            x = np.clip(sub_x, 0.0, 255.0)
+        return x
 
     def deepfool(self, x):
         x = x.reshape((1,) + inp_size)
@@ -102,12 +115,10 @@ def adv_img(mdl, img, thresh, max_iter=50):
     confidence = mdl.predict(img.reshape((1,) + inp_size))
     yield (deprocess_img(img), confidence)
     print('Current confidence value: ', confidence)
-    while confidence < thresh and max_iter > 0:
-        img = evaluator.deepfool(img)
-        confidence = mdl.predict(img.reshape((1,) + inp_size))
-        print('Current confidence value: ', confidence) #'minval =', min_val)
-        yield (deprocess_img(img), confidence)
-        max_iter -= 1
+    img = evaluator.iterate(img) 
+    confidence = mdl.predict(img.reshape((1,) + inp_size))
+    print('Current confidence value: ', confidence) #'minval =', min_val)
+    yield (deprocess_img(img), confidence)
     #while confidence < thresh:
         #res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
         #img = res.x
