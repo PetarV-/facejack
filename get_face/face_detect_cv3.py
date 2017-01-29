@@ -3,17 +3,40 @@ import operator
 import numpy as np
 import pickle
 import requests
+import threading
 
+myl = threading.Lock()
+
+def dispact_and_update(img, hack, base_im, x, y, w, h):
+    try:
+        myurl = "http://facejack.westeurope.cloudapp.azure.com:5001/imsend"
+        headers = {
+            'content-type': "application/x-www-form-urlencoded",
+            'cache-control': "no-cache"
+        }
+        r = requests.post(url=myurl, data=img, headers=headers, params={'hack': str(hack)}).json()
+
+        reply = 'authentication' in r and r['authentication'] == "ALLOWED"
+        disp_face = cv2.resize(base_im[y:y + h, x:x + w], (224, 224), 0, 0, cv2.INTER_LANCZOS4)
+        if reply:
+            cv2.rectangle(disp_face, (0, 0), (222, 222), (0, 255, 0), 2)
+        else:
+            cv2.rectangle(disp_face, (0, 0), (222, 222), (0, 0, 255), 2)
+        cv2.imshow("Face", disp_face)
+    finally:
+        myl.release()
+
+def push_to_server(img, hack, base_im, x, y, w, h):
+    t = threading.Thread(target=dispact_and_update, args=(img, hack, base_im, x, y, w, h))
+    t.setDaemon(True)
+    myl.acquire()
+    t.start()
 
 def main():
     cascPath = "get-face/haarcascade_frontalface_default.xml"
     cascPath = "haarcascade_frontalface_default.xml"
     # Create the haar cascade
-    myurl = "http://facejack.westeurope.cloudapp.azure.com:5001/imsend"
-    headers = {
-        'content-type': "application/x-www-form-urlencoded",
-        'cache-control': "no-cache"
-    }
+
     hack = False
     faceCascade = cv2.CascadeClassifier(cascPath)
     # Read the image
@@ -53,22 +76,23 @@ def main():
                     last_seen = x, y, w, h, count+1
 
 
-                    if count > 10:
+                    if count > 20:
                         sub_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
                         s_face = cv2.cvtColor(sub_face, cv2.COLOR_BGR2RGB)
                         cv2.imshow("Face", sub_face)
                         last_seen = x, y, w, h, 1
                         dat = pickle.dumps(s_face)
                         # print(dat)
-                        r = requests.post(url = myurl, data=dat, headers=headers, params={'hack': str(hack)}).json()
-
-                        reply = 'authentication' in r and r['authentication'] == "ALLOWED"
-                        disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
-                        if reply:
-                            cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
-                        else:
-                            cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
-                        cv2.imshow("Face",  disp_face)
+                        push_to_server(dat, hack, image, x, y, w, h)
+                        # r = requests.post(url = myurl, data=dat, headers=headers, params={'hack': str(hack)}).json()
+                        #
+                        # reply = 'authentication' in r and r['authentication'] == "ALLOWED"
+                        # disp_face = cv2.resize(image[y:y + h, x:x + w], (224,224), 0, 0, cv2.INTER_LANCZOS4)
+                        # if reply:
+                        #     cv2.rectangle(disp_face,(0,0), (222,222), (0,255,0), 2)
+                        # else:
+                        #     cv2.rectangle(disp_face, (0, 0), (222, 222), (0,0,255), 2)
+                        # cv2.imshow("Face",  disp_face)
                 else:
                     last_seen= None
             else:
@@ -81,8 +105,8 @@ def main():
             else:
                 cv2.rectangle(image, (x, y), (x + w, y + h), red, 2)
 
-        print(last_seen)
-        key_press = (cv2.waitKey(1) & 0xFF)
+        # print(last_seen)
+        key_press = (cv2.waitKey(2) & 0xFF)
         if key_press == ord('q'):
             q = True
         elif key_press == ord('h'):
