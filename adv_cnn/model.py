@@ -178,7 +178,7 @@ def preprocess_img(x):
 
 def is_admin(x):
     x = preprocess_img(x)
-    conf = mdl1.predict(x.reshape(1,224,224,3))
+    conf = mdl1.predict(x.reshape(1,224,224,3))[0][0]
     return (conf > 0.5, conf)
 
 def do_adver(x):
