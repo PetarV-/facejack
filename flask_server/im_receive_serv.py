@@ -39,7 +39,7 @@ def sanitise_image(mat):
     int_mat = np.rint(mat).astype(int)
     return np.clip(int_mat, 0, 255).astype(np.uint8)
 
-def publish_image(face_im, adv_im, combined_im, confidence=0.0):
+def publish_image(face_im, adv_im, combined_im, confidence=0.0, hack=False):
     """convert png; base64 encode that and post to stat server"""
     # Do face
     text_buf = io.BytesIO()
@@ -57,11 +57,16 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     url = "http://facejack.westeurope.cloudapp.azure.com:5000/push_stats"
-
-    payload = b"adversarial=yes&original_img="+encoded_face+\
-              b"&adv_mod_img="+encoded_adv+\
-              b"&modified_img="+encoded_combined+\
-              b"&confidence="+str(confidence*100).encode()
+    if hack:
+        payload = b"adversarial=yes&original_img=" + encoded_face + \
+                  b"&adv_mod_img=" + encoded_adv + \
+                  b"&modified_img=" + encoded_combined + \
+                  b"&confidence=" + str(confidence * 100).encode()
+    else:
+        payload = b"adversarial=no&original_img="+encoded_face+\
+                  b"&adv_mod_img="+encoded_adv+\
+                  b"&modified_img="+encoded_combined+\
+                  b"&confidence="+str(confidence*100).encode()
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
@@ -77,7 +82,9 @@ def proc_face(face):
     print("PROC_FACE")
     # time.sleep(3)
     # publish_image(face, face, face)
-    return is_admin(face)
+    res, conf = is_admin(face)
+    publish_image(face, np.zeros_like(face), face, conf)
+    return res
 
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
