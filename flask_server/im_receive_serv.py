@@ -36,7 +36,8 @@ def get_adv(face, mod_face):
     return diff
 
 def sanitise_image(mat):
-    return np.rint(mat).astype(int).astype(np.uint8)
+    int_mat = np.rint(mat).astype(int)
+    return np.clip(int_mat, 0, 255).astype(np.uint8)
 
 def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     """convert png; base64 encode that and post to stat server"""
