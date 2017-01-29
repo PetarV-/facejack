@@ -16,10 +16,7 @@ def push_stats():
     app.cache['original_img'] = request.form['original_img'].replace('#','+')
     app.cache['adv_mod_img'] = request.form['adv_mod_img'].replace('#','+')
     app.cache['modified_img'] = request.form['modified_img'].replace('#','+')
-    if app.cache['adversarial_enabled']:
-        app.cache['confidence'] = request.form['confidence']
-    else:
-        app.cache['confidence'] = None
+    app.cache['confidence'] = request.form['confidence']
     return ('', 204)
 
 @app.route('/')

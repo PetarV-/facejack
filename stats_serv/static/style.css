@@ -23,7 +23,7 @@ body {
 
 .face-img {
     width: 224px;
-    height: 224px;
+    height: 224px;span
 }
 
 #img-container {
@@ -31,12 +31,13 @@ body {
 }
 
 #stats-container {
-    margin-top: 65px;
+    margin-top: 50px;
     font-size: 16pt;
 }
 
 .img-subtitle {
     font-size: 14pt;
+    width: 224px;
 }
 
 .math-sign {
