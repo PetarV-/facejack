@@ -29,6 +29,7 @@ class Eval(object):
         out = layer_dict['conf'].output
 
         loss -= K.sum(out)
+        loss += 0.8 * K.sum(K.square(inp)) / np.prod(inp_size)
         # Might want to add some L2-loss in here, depending on output
         #loss += 0.0005 * K.sum(K.square(inp - x))
         grads = K.gradients(loss, inp)
@@ -96,15 +97,17 @@ def deprocess_img(x):
 
     return x
 
-def adv_img(mdl, img, thresh):
+def adv_img(mdl, img, thresh, max_iter=50):
     evaluator = Eval(mdl, img)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
     yield (deprocess_img(img), confidence)
     print('Current confidence value: ', confidence)
-    img = evaluator.deepfool(img)
-    confidence = mdl.predict(img.reshape((1,) + inp_size))
-    print('Current confidence value: ', confidence) #'minval =', min_val)
-    yield (deprocess_img(img), confidence)
+    while confidence < thresh and max_iter > 0:
+        img = evaluator.deepfool(img)
+        confidence = mdl.predict(img.reshape((1,) + inp_size))
+        print('Current confidence value: ', confidence) #'minval =', min_val)
+        yield (deprocess_img(img), confidence)
+        max_iter -= 1
     #while confidence < thresh:
         #res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
         #img = res.x
