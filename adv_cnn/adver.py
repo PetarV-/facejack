@@ -41,6 +41,16 @@ class Eval(object):
 
         self.f_outputs = K.function([inp, K.learning_phase()], outputs)
 
+    def fgsm(self, x, eps=0.3):
+        inp = x.reshape((1,) + inp_size)
+        outs = self.f_outputs([inp, 0])
+        loss = outs[0]
+        grads = np.array(outs[1:]).reshape(inp_size)
+        s_grads = np.sign(grads)
+        scaled_s_grads = eps * s_grads
+        adv_x = x + scaled_s_grads
+        return np.clip(adv_x, 0.0, 255.0)
+
     def eval_loss_and_grads(self, x):
         x = x.reshape((1,) + inp_size)
         outs = self.f_outputs([x, 0])
@@ -81,11 +91,12 @@ def adv_img(mdl, img, thresh):
     yield (deprocess_img(img), confidence)
     print('Current confidence value: ', confidence)
     while confidence < thresh:
-        res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
-        img = res.x
-        min_val = res.fun
+        #res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
+        #img = res.x
+        #min_val = res.fun
+        img = evaluator.fgsm(img)
         confidence = mdl.predict(img.reshape((1,) + inp_size))
-        print('Current confidence value: ', confidence, 'minval =', min_val)
+        print('Current confidence value: ', confidence) #'minval =', min_val)
         img = img.reshape(inp_size)
         yield (deprocess_img(img), confidence)
 
