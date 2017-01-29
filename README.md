@@ -5,11 +5,11 @@ your face has been hijacked
 
 ## Background
 
-Machine learning with deep neural networks (commonly dubbed "deep learning") has taken the world by storm in the previous years, smashing record after record in a wide variety of difficult tasks (spanning previously largely unrelated fields such as computer vision, speech recognition, natural language processing, etc). One of the computer vision tasks where such gains are clear is the task of _facial recognition_ (identifying a person based on his/her face)---a deep neural network being the primary tool used for this purpose at [Facebook](https://research.fb.com/publications/deepface-closing-the-gap-to-human-level-performance-in-face-verification/), among other places. 
+Machine learning with deep neural networks (commonly dubbed "deep learning") has taken the world by storm, smashing record after record in a wide variety of difficult tasks from fields that were largely unexplored in previous years, such as computer vision, speech recognition and natural language processing. One computer vision task that benefits from such clear gains is _facial recognition_ (identifying a person based on his/her face)---a deep neural network being the primary tool used for this purpose at [Facebook](https://research.fb.com/publications/deepface-closing-the-gap-to-human-level-performance-in-face-verification/), among other places. 
 
-One natural extension of the above could be to exploit neural networks within a secure application, in order to authenticate a person based on a shot of their face. Unfortunately, despite the apparently superb performance of such models, it is fairly easy to construct inputs on which the network becomes completely _confounded_ (commonly known as _adversarial examples_). We built **FaceJack** in order to illuminate this concept. In particular, we'd like to emphasise:
+One natural extension of the above could be to exploit neural networks within a secure application, in order to authenticate a person based on a shot of their face. Unfortunately, despite the apparently superb performance of such models, it is fairly easy to construct inputs which can trick the network into authenticating a _stranger_ (commonly known as _adversarial examples_). We built **FaceJack** in order to illuminate this concept. In particular, we'd like to emphasise:
 - how **simple** it is to generate such "fooling" inputs algorithmically, if one has access to the neural network used for facial recognition (either directly or through an API).
-- how (often _imperceptibly_ to humans) **close** the "fooling" inputs can be to legitimately generated inputs;
+- how _imperceptibly_ **close** the "fooling" inputs can be to legitimately generated inputs;
 - how this attack may be executed in **real-time**, requiring only a mid-range GPU.
 
 But let's take it slowly---what even _are_ adversarial inputs?
@@ -20,15 +20,14 @@ Adversarial inputs are made possible by the very _design_ of neural networks. On
 - Feeding an input to the network, computing a prediction
 - Computing an _error_ of the prediction with respect to the expected output
 - Propagating the error backwards through the network, updating parameters as we go.
-<image of an MLP here>
 
-The network's differentiability allows us to consider the error function in its parameters, for a fixed input and output---so we can optimise them. However, it also allows considering an error function in the input, for a fixed choice of parameters---so we can modify the _input_ to produce a desirable output. If the "desirable" output classification is one that the original input does not belong to (e.g. classifying my face as John Travolta), then the constructed input represents an _adversarial_ example. Deep neural networks are particularly vulnerable to such inputs, for reasons that are threefold:
+The network's differentiability allows us to consider the error function in its parameters, for a fixed input and output---so we can optimise them. However, it also allows us to set up an error function in the input, for a fixed choice of parameters---so we can modify the _input_ to produce a desirable output. If the "desirable" output classification is one that the original input does not belong to (e.g. classifying my face as John Travolta), then the constructed input represents an _adversarial_ example. Deep neural networks are particularly vulnerable to such inputs, for three main reasons:
 
 - Computing an adversarial example usually only requires a crude approximation of the gradient of the desired output with respect to the input image---often, only the _sign_ of this gradient for each input pixel is sufficient.
-- The computed adversarial examples are often _imperceptibly similar_ to the original input---in fact, there is an entire **space** of adversarial inputs surrounding any correctly classified image, as [Szegedy et al.](https://arxiv.org/abs/1312.6199) have demonstrated in 2013. <image of an adversarial panda here>
+- The computed adversarial examples are often _imperceptibly similar_ to the original input---in fact, there is an entire **space** of adversarial inputs surrounding any correctly classified image, as [Szegedy et al.](https://arxiv.org/abs/1312.6199) have demonstrated in 2013.
 - Even worse---what's adversarial for one network architecture will very often be adversarial for a completely different network as well---as they are often trained on the same datasets!
 
-Therefore, deploying neural networks in secure applications requires particular care, as adversarial inputs give rise to a potentially unforeseen _covert channel_ for an exploit.
+Therefore, using neural networks in secure applications requires particular care, as adversarial inputs give rise to a potentially unforeseen _covert channel_ for an exploit.
 
 ## What have we done?
 
