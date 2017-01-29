@@ -1,2 +1,2 @@
 # facejack
-your face has been jacked
+your face has been hijacked
