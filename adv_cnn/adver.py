@@ -30,7 +30,7 @@ class Eval(object):
 
         loss -= K.sum(out)
         # Might want to add some L2-loss in here, depending on output
-        loss += 0.0001 * K.sum(K.square(inp - x))
+        loss += 0.0005 * K.sum(K.square(inp - x))
         grads = K.gradients(loss, inp)
 
         outputs = [loss]
@@ -67,6 +67,7 @@ class Eval(object):
 def adv_img(mdl, img, thresh):
     evaluator = Eval(mdl, img)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
+    yield ((img + 0.5) * 255.0, confidence)
     while confidence < thresh:
         res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
         img = res.x
