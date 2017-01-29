@@ -49,7 +49,8 @@ def get_model():
     fc7 = Dense(4096, trainable=False, activation='relu', name='fc7')(fc6)
     #fc7 = Dropout(0.5)(fc7)
     fc7 = BatchNormalization()(fc7)
-    out = Dense(1, activation='sigmoid', name='conf')(fc7)
+    logit = Dense(1, activation='linear', name='conf')(fc7)
+    out = Activation('sigmoid')
 
     model = Model(input=inp, output=out)
 
