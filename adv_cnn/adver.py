@@ -18,7 +18,7 @@ import numpy as np
 inp_size = (224, 224, 3)
 
 class Eval(object):
-    def __init__(self, mdl):
+    def __init__(self, mdl, x):
         self.loss_value = None
         self.grad_values = None
 
@@ -30,6 +30,7 @@ class Eval(object):
 
         loss -= K.sum(out)
         # Might want to add some L2-loss in here, depending on output
+        loss += K.sum(K.square(out - x))
         grads = K.gradients(loss, inp)
 
         outputs = [loss]
@@ -64,7 +65,7 @@ class Eval(object):
         return ret
 
 def adv_img(mdl, img, thresh):
-    evaluator = Eval(mdl)
+    evaluator = Eval(mdl, img)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
     while confidence < thresh:
         res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
