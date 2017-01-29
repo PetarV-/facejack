@@ -91,7 +91,8 @@ def proc_face_with_hack(face):
     for face1, confidence in do_adver(face):
         face1 = sanitise_image(face1)
         publish_image(face, get_adv(face, face1), face1, confidence, hack=True)
-    return proc_face(face1)
+    res, conf = is_admin(face1)
+    return res
 
 @app.route('/')
 def hello_world():
