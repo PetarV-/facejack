@@ -43,3 +43,7 @@ body {
     font-size: 22pt;
     padding-left: 15px;
 }
+
+.confidence-span {
+    text-align: right;
+}

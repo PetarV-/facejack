@@ -46,7 +46,6 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Stats</a></li>
-                <li><a href="#about">About</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -68,20 +67,25 @@
                 <p class="img-subtitle">Original</p>
                 <img class="face-img" src="{{ original_img }}">
                 <span class="math-sign">+ ε ✕</span>
+                <br>
+                <p class="img-subtitle">Image from the security camera</p>
             </div>
             <div class="col-sm-4">
                 <p class="img-subtitle">Modifications</p>
                 <img class="face-img" src="{{ adv_mod_img }}">
                 <span class="math-sign">=</span>
+                <p class="img-subtitle">Modifications introduced to the
+                    image (amplified here)</p>
             </div>
             <div class="col-sm-4">
                 <p class="img-subtitle">Result</p>
                 <img class="face-img" src="{{ modified_img }}">
+                <p class="img-subtitle">Resulting image</p>
             </div>
         </div>
         <div id="stats-container" class="clearfix">
             {% if confidence is not none %}
-            <span>Confidence: {{ confidence }}%</span>
+            <span class="confidence-span">Confidence: {{ confidence }}%</span>
             {% endif %}
         </div>
     </div>

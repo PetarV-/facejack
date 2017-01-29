@@ -67,7 +67,7 @@ class Eval(object):
             sub_x = np.minimum(x + eps, np.maximum(x - eps, adv_x))
             next_x = preprocess_img(np.clip(deprocess_img(sub_x), 0.0, 255.0))
             x = next_x
-            confidence = self.mdl.predict(x.reshape((1,) + inp_size))
+            confidence = self.mdl.predict(x.reshape((1,) + inp_size))[0][0]
             print('Current confidence value: ', confidence) #'minval =', min_val)
             yield (deprocess_img(x), confidence)
             num_iter -= 1
