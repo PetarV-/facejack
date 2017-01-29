@@ -50,7 +50,7 @@ def get_model():
     #fc7 = Dropout(0.5)(fc7)
     fc7 = BatchNormalization()(fc7)
     logit = Dense(1, activation='linear', name='conf')(fc7)
-    out = Activation('sigmoid')
+    out = Activation('sigmoid')(logit)
 
     model = Model(input=inp, output=out)
 
