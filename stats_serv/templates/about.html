@@ -70,13 +70,14 @@
 <ul>
 <li>Feeding an input to the network, computing a prediction</li>
 <li>Computing an <em>error</em> of the prediction with respect to the expected output</li>
-<li>Propagating the error backwards through the network, updating parameters as we go.<br>
-&lt;image of an MLP here&gt;</li>
+<li>Propagating the error backwards through the network, updating parameters as we go.</li>
 </ul>
+<img src="maxout_perceptron.png"></img>
 <p>The network’s differentiability allows us to consider the error function in its parameters, for a fixed input and output—so we can optimise them. However, it also allows considering an error function in the input, for a fixed choice of parameters—so we can modify the <em>input</em> to produce a desirable output. If the “desirable” output classification is one that the original input does not belong to (e.g. classifying my face as John Travolta), then the constructed input represents an <em>adversarial</em> example. Deep neural networks are particularly vulnerable to such inputs, for reasons that are threefold:</p>
 <ul>
 <li>Computing an adversarial example usually only requires a crude approximation of the gradient of the desired output with respect to the input image—often, only the <em>sign</em> of this gradient for each input pixel is sufficient.</li>
-<li>The computed adversarial examples are often <em>imperceptibly similar</em> to the original input—in fact, there is an entire <strong>space</strong> of adversarial inputs surrounding any correctly classified image, as <a href="https://arxiv.org/abs/1312.6199">Szegedy et al.</a> have demonstrated in 2013. &lt;image of an adversarial panda here&gt;</li>
+<li>The computed adversarial examples are often <em>imperceptibly similar</em> to the original input—in fact, there is an entire <strong>space</strong> of adversarial inputs surrounding any correctly classified image, as <a href="https://arxiv.org/abs/1312.6199">Szegedy et al.</a> have demonstrated in 2013.</li>
+<img src="panda_gibbon.png"></img>
 <li>Even worse—what’s adversarial for one network architecture will very often be adversarial for a completely different network as well—as they are often trained on the same datasets!</li>
 </ul>
 <p>Therefore, deploying neural networks in secure applications requires particular care, as adversarial inputs give rise to a potentially unforeseen <em>covert channel</em> for an exploit.</p>
