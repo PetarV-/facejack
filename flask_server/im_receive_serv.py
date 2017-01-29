@@ -39,7 +39,7 @@ def sanitise_image(mat):
     int_mat = np.rint(mat).astype(int)
     return np.clip(int_mat, 0, 255).astype(np.uint8)
 
-def publish_image(face_im, adv_im, combined_im, confidence=0.0):
+def publish_image(face_im, adv_im, combined_im, confidence=[[0.0]]):
     """convert png; base64 encode that and post to stat server"""
     # Do face
     text_buf = io.BytesIO()
@@ -61,7 +61,7 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     payload = b"adversarial=yes&original_img="+encoded_face+\
               b"&adv_mod_img="+encoded_adv+\
               b"&modified_img="+encoded_combined+\
-              b"&confidence="+str(confidence*100).encode()
+              b"&confidence="+str(confidence[0][0]*100).encode()
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"

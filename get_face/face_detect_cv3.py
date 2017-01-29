@@ -24,8 +24,8 @@ def main():
 
     while vidcap.isOpened():
         q=False
-        retval, img = vidcap.read()
-        image = cv2.flip(img, 1)
+        retval, image= vidcap.read()
+        # image = cv2.flip(img, 1)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # Detect faces in the image
