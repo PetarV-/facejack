@@ -64,10 +64,21 @@ class Eval(object):
         self.grad_values = None
         return ret
 
+def deprocess_img(x):
+    aux = np.copy(x)
+    x[:,:,0] = aux[:,:,2]
+    x[:,:,2] = aux[:,:,0]
+
+    x[:,:,0] += 129.1863
+    x[:,:,1] += 104.7624
+    x[:,:,2] += 93.5940
+
+    return x
+
 def adv_img(mdl, img, thresh):
     evaluator = Eval(mdl, img)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
-    yield (img, confidence)
+    yield (deprocess_img(img), confidence)
     print('Current confidence value: ', confidence)
     while confidence < thresh:
         res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
@@ -76,7 +87,5 @@ def adv_img(mdl, img, thresh):
         confidence = mdl.predict(img.reshape((1,) + inp_size))
         print('Current confidence value: ', confidence, 'minval =', min_val)
         img = img.reshape(inp_size)
-        #img_r = img + 0.5
-        #img_r *= 255.0
-        yield (img, confidence)
+        yield (deprocess_img(img), confidence)
 

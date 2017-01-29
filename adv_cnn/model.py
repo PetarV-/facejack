@@ -163,15 +163,23 @@ def get_trained(wt_file=None):
 
 mdl1 = get_trained(wt_file='adv_cnn/vgg_tuned.h5')
 
+def preprocess_img(x):
+    ret = x.astype('float32')
+    ret[:,:,0] -= 129.1863
+    ret[:,:,1] -= 104.7624
+    ret[:,:,2] -= 93.5940
+
+    aux = np.copy(ret)
+    ret[:,:,0] = aux[:,:,2]
+    ret[:,:,2] = aux[:,:,0]
+
+    return ret
+
 def is_admin(x):
-    x = x.astype('float32') 
-    #x /= 255.0
-    #x -= 0.5
+    x = preprocess_img(x)
     return mdl1.predict(x.reshape(1,224,224,3)) > 0.5
 
 def do_adver(x):
-    x = x.astype('float32')
-    #x /= 255.0
-    #x -= 0.5
+    x = preprocess_img(x)
     yield from adver.adv_img(mdl1, x, 0.95)
 
