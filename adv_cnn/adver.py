@@ -21,6 +21,7 @@ class Eval(object):
     def __init__(self, mdl, x):
         self.loss_value = None
         self.grad_values = None
+        self.mdl = mdl
 
         loss = K.variable(0.)
         layer_dict = dict([(layer.name, layer) for layer in mdl.layers])
@@ -65,8 +66,10 @@ class Eval(object):
             sub_x = np.minimum(x + eps, np.maximum(x - eps, adv_x))
             next_x = preprocess_img(np.clip(deprocess_img(sub_x), 0.0, 255.0))
             x = next_x
+            confidence = self.mdl.predict(x.reshape((1,) + inp_size))
+            print('Current confidence value: ', confidence) #'minval =', min_val)
+            yield (deprocess_img(x), confidence)
             num_iter -= 1
-        return x
 
     def deepfool(self, x):
         x = x.reshape((1,) + inp_size)
@@ -128,18 +131,5 @@ def adv_img(mdl, img, thresh, max_iter=50):
     evaluator = Eval(mdl, img)
     confidence = mdl.predict(img.reshape((1,) + inp_size))
     yield (deprocess_img(img), confidence)
-    print('Current confidence value: ', confidence)
-    img = evaluator.iterate(img) 
-    confidence = mdl.predict(img.reshape((1,) + inp_size))
-    print('Current confidence value: ', confidence) #'minval =', min_val)
-    yield (deprocess_img(img), confidence)
-    #while confidence < thresh:
-        #res = minimize(evaluator.loss, img.flatten(), method='L-BFGS-B', jac=evaluator.grads, options={'maxiter': 1}) 
-        #img = res.x
-        #min_val = res.fun
-    #    img = evaluator.fgsm(img)
-    #    confidence = mdl.predict(img.reshape((1,) + inp_size))
-    #    print('Current confidence value: ', confidence) #'minval =', min_val)
-    #    img = img.reshape(inp_size)
-    #    yield (deprocess_img(img), confidence)
+    yield from evaluator.iterate(img) 
 
