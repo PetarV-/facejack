@@ -35,6 +35,10 @@ def get_adv(face, mod_face):
     diff[:,:,2] = diff_blue
     return diff
 
+def sanitise_image(mat):
+    int_mat = np.rint(mat).astype(int)
+    return np.clip(int_mat, 0, 255).astype(np.uint8)
+
 def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     """convert png; base64 encode that and post to stat server"""
     # Do face
@@ -49,7 +53,7 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
 
     # Do combined
     text_buf = io.BytesIO()
-    png.from_array(combined_im.astype(int), 'RGB').save(text_buf)
+    png.from_array(combined_im, 'RGB').save(text_buf)
     encoded_combined = b"data:image/png;base64," + base64.b64encode(text_buf.getvalue(),b'#/')
 
     url = "http://facejack.westeurope.cloudapp.azure.com:5000/push_stats"
@@ -57,7 +61,7 @@ def publish_image(face_im, adv_im, combined_im, confidence=0.0):
     payload = b"adversarial=yes&original_img="+encoded_face+\
               b"&adv_mod_img="+encoded_adv+\
               b"&modified_img="+encoded_combined+\
-              b"&confidence="+str(confidence).encode()
+              b"&confidence="+str(confidence*100).encode()
     headers = {
         'content-type': "application/x-www-form-urlencoded",
         'cache-control': "no-cache"
@@ -78,6 +82,7 @@ def proc_face(face):
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
     for face1, confidence in do_adver(face):
+        face1 = sanitise_image(face1)
         publish_image(face, get_adv(face, face1), face1, confidence)
     return proc_face(face1)
 

@@ -46,7 +46,7 @@ for target in targets:
         )
         if len(faces)>0:
             (x, y, w, h) = max(faces, key=(lambda f: operator.itemgetter(2)(f)))
-            subface = cv2.resize(im[y:y + h, x:x + w], (224, 224), 0, 0, cv2.INTER_LANCZOS4)
+            im = cv2.resize(im[y:y + h, x:x + w], (224, 224), 0, 0, cv2.INTER_LANCZOS4)
             # im = cv2.cvtColor(subface, cv2.COLOR_BGR2RGB)
         else:
             missed += 1
