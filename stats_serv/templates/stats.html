@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <meta http-equiv="refresh" content="3"> -->
+    <meta http-equiv="refresh" content="1">
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -63,11 +63,11 @@
             <span class="regular-notice">No hacking</span>
             {% endif %}
         </div>
-        <div id="img-container">
+        <div id="img-container" class="clearfix">
             <div class="col-sm-4">
                 <p class="img-subtitle">Original</p>
                 <img class="face-img" src="{{ original_img }}">
-                <span class="math-sign">+</span>
+                <span class="math-sign">+ ε</span>
             </div>
             <div class="col-sm-4">
                 <p class="img-subtitle">Modifications</p>
@@ -79,7 +79,7 @@
                 <img class="face-img" src="{{ modified_img }}">
             </div>
         </div>
-        <div id="stats-container">
+        <div id="stats-container" class="clearfix">
             {% if confidence is not none %}
             <span>Confidence: {{ confidence }}%</span>
             {% endif %}
