@@ -30,7 +30,7 @@ class Eval(object):
 
         loss -= K.sum(out)
         # Might want to add some L2-loss in here, depending on output
-        #loss += 0.0005 * K.sum(K.square(inp - x))
+        # loss += 0.0005 * K.sum(K.square(inp - x))
         grads = K.gradients(loss, inp)
 
         outputs = [loss]
@@ -53,16 +53,19 @@ class Eval(object):
 
     def iterate(self, x, eps=32, alp=1.0):
         num_iter = min(eps + 4, 1.25 * eps)
-        while num_iter > 0:
+        loss = 1.0
+        while loss > 0 and num_iter > 0:
             inp = x.reshape((1,) + inp_size)
             outs = self.f_outputs([inp, 0])
             loss = outs[0]
             print('Loss: ', loss)
             grads = np.array(outs[1:]).reshape(inp_size)
             s_grads = np.sign(grads)
-            adv_x = x + alp * s_grads
+            adv_x = x - alp * s_grads
             sub_x = np.minimum(x + eps, np.maximum(x - eps, adv_x))
-            x = np.clip(sub_x, 0.0, 255.0)
+            next_x = preprocess_img(np.clip(deprocess_img(sub_x), 0.0, 255.0))
+            x = next_x
+            num_iter -= 1
         return x
 
     def deepfool(self, x):
@@ -98,6 +101,17 @@ class Eval(object):
         self.loss_value = None
         self.grad_values = None
         return ret
+
+def preprocess_img(x):
+    x[:,:,0] -= 129.1863
+    x[:,:,1] -= 104.7624
+    x[:,:,2] -= 93.5940
+
+    aux = np.copy(x)
+    x[:,:,0] = aux[:,:,2]
+    x[:,:,2] = aux[:,:,0]
+
+    return x
 
 def deprocess_img(x):
     aux = np.copy(x)
