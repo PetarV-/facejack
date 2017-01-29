@@ -163,11 +163,13 @@ def get_trained(wt_file=None):
 mdl1 = get_trained(wt_file='adv_cnn/vgg_tuned.h5')
 
 def is_admin(x):
+    x = x.astype('float32') 
     x /= 255.0
     x -= 0.5
     return mdl1.predict(x.reshape(1,224,224,3)) > 0.5
 
 def do_adver(x):
+    x = x.astype('float32')
     x /= 255.0
     x -= 0.5
     yield from adver.adv_img(mdl1, x, 0.95)
