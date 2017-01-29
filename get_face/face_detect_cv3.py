@@ -21,10 +21,11 @@ def main():
 
     location_persistence_tolerance = 100
     last_seen = None
-    mx,my=0,0
+
     while vidcap.isOpened():
         q=False
-        retval, image = vidcap.read()
+        retval, img = vidcap.read()
+        image = cv2.flip(img, 1)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # Detect faces in the image
@@ -74,9 +75,8 @@ def main():
                 last_seen = x, y, w, h, 1
             cv2.rectangle(image, (x, y), (x + w, y + h), green, 2)
             mx, my = x,y
-
         for (x, y, w, h) in faces:
-            if mx==x and my==y:
+            if mx ==x and my==y:
                 cv2.rectangle(image, (x, y), (x + w, y + h), green, 2)
             else:
                 cv2.rectangle(image, (x, y), (x + w, y + h), red, 2)
@@ -89,7 +89,7 @@ def main():
             hack = not hack
         if hack:
             # print("hack")
-            cv2.putText(image, 'HACK ON', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255) )
+            cv2.putText(image, 'HACK ON', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,128) )
         cv2.imshow("FaceJACK", image)
         if q:
             break
