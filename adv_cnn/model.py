@@ -165,7 +165,7 @@ def get_trained(wt_file=None):
 mdl1 = get_trained(wt_file='adv_cnn/vgg_tuned.h5')
 
 def preprocess_img(x):
-    ret = x.astype('float32')
+    ret = np.copy(x).astype('float32')
     ret[:,:,0] -= 129.1863
     ret[:,:,1] -= 104.7624
     ret[:,:,2] -= 93.5940

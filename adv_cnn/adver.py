@@ -55,6 +55,7 @@ class Eval(object):
     def iterate(self, x, eps=32, alp=1.0):
         num_iter = min(eps + 4, 1.25 * eps)
         loss = 1.0
+        x = np.copy(x)
         while loss > 0 and num_iter > 0:
             inp = x.reshape((1,) + inp_size)
             outs = self.f_outputs([inp, 0])
@@ -106,6 +107,7 @@ class Eval(object):
         return ret
 
 def preprocess_img(x):
+    x = np.copy(x)
     x[:,:,0] -= 129.1863
     x[:,:,1] -= 104.7624
     x[:,:,2] -= 93.5940
@@ -117,6 +119,7 @@ def preprocess_img(x):
     return x
 
 def deprocess_img(x):
+    x = np.copy(x)
     aux = np.copy(x)
     x[:,:,0] = aux[:,:,2]
     x[:,:,2] = aux[:,:,0]
