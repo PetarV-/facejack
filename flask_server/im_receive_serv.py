@@ -78,7 +78,7 @@ def proc_face(face):
 def proc_face_with_hack(face):
     print("MAJOR HACK IN PROGRESS")
     for face1, confidence in do_adver(face):
-        face1 = face1.astype(int)
+        face1 = face1.astype(np.int8)
         print(face1.shape, face1.dtype, face1.min())
         publish_image(face, get_adv(face, face1), face1, confidence)
     return proc_face(face1)
